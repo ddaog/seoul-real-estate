@@ -1,0 +1,14 @@
+/* Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+}
+
+/* Tailwind Base - These will be replaced by Tailwind's actual directives when using a proper build */
+/* For now, we rely on the CDN in index.html */
