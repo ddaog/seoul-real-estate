@@ -45,13 +45,26 @@ export const App: React.FC = () => {
     if (newStats[StatType.MENTAL] >= 100) return "해탈의 경지에 이르러 산으로 들어갔습니다.";
     if (newStats[StatType.FOMO] <= 0) return "시대에 뒤떨어진 벼락거지가 되었습니다.";
     if (newStats[StatType.FOMO] >= 100) return "광기에 휩쓸려 무리한 영끌을 하다 파멸했습니다.";
-    if (newStats[StatType.REGULATION] <= 0) return "사기꾼들의 표적이 되어 모든 것을 잃었습니다.";
-    if (newStats[StatType.REGULATION] >= 100) return "강력한 규제에 막혀 숨도 쉴 수 없게 되었습니다.";
+    if (newStats[StatType.HEALTH] <= 0) return "과로와 스트레스로 돌연사했습니다.";
+    if (newStats[StatType.HEALTH] >= 100) return "무병장수하며 서울 부동산의 역사를 지켜봅니다.";
     return null;
   };
 
+  const [previewImpact, setPreviewImpact] = useState<Partial<Record<StatType, number>> | null>(null);
+
+  const handleDrag = useCallback((direction: 'left' | 'right' | null, progress: number) => {
+    if (!direction || !state.currentCard) {
+      setPreviewImpact(null);
+      return;
+    }
+
+    const choice = direction === 'left' ? state.currentCard.leftChoice : state.currentCard.rightChoice;
+    setPreviewImpact(choice.impact);
+  }, [state.currentCard]);
+
   const handleChoice = async (side: 'left' | 'right') => {
     if (!state.currentCard || loading || outcome) return;
+    setPreviewImpact(null);
 
     const choice = side === 'left' ? state.currentCard.leftChoice : state.currentCard.rightChoice;
     const newStats = { ...state.stats };
@@ -173,7 +186,7 @@ export const App: React.FC = () => {
             DAY {state.daysSurvived}
           </div>
         </div>
-        <StatBar stats={state.stats} />
+        <StatBar stats={state.stats} previewImpact={previewImpact} />
         <div className="mt-2 text-[9px] font-bold text-yellow-500/80 tracking-widest uppercase animate-pulse">
           {state.currentStage}
         </div>

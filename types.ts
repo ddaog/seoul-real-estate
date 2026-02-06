@@ -1,9 +1,8 @@
-
 export enum StatType {
   ASSET = 'ASSET',
   MENTAL = 'MENTAL',
   FOMO = 'FOMO',
-  REGULATION = 'REGULATION'
+  HEALTH = 'HEALTH'
 }
 
 export enum HeroStage {
@@ -52,7 +51,7 @@ export interface Stats {
   [StatType.ASSET]: number;
   [StatType.MENTAL]: number;
   [StatType.FOMO]: number;
-  [StatType.REGULATION]: number;
+  [StatType.HEALTH]: number;
 }
 
 export interface GameState {

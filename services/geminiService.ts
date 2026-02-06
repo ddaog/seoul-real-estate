@@ -27,8 +27,8 @@ export async function generateNewEvent(history: string[], days: number): Promise
       "character": "이름과 직함",
       "dialogue": "캐릭터의 성격이 묻어나는 대사",
       "visualDescription": "이미지 생성을 위한 캐릭터 외모 묘사",
-      "leftChoice": { "text": "선택지", "impact": { "ASSET": 숫자, "MENTAL": 숫자, "FOMO": 숫자, "REGULATION": 숫자 }, "feedback": "리액션", "outcome": "결과" },
-      "rightChoice": { "text": "선택지", "impact": { "ASSET": 숫자, "MENTAL": 숫자, "FOMO": 숫자, "REGULATION": 숫자 }, "feedback": "리액션", "outcome": "결과" }
+      "leftChoice": { "text": "선택지", "impact": { "ASSET": 숫자, "MENTAL": 숫자, "FOMO": 숫자, "HEALTH": 숫자 }, "feedback": "리액션", "outcome": "결과" },
+      "rightChoice": { "text": "선택지", "impact": { "ASSET": 숫자, "MENTAL": 숫자, "FOMO": 숫자, "HEALTH": 숫자 }, "feedback": "리액션", "outcome": "결과" }
     }
   `;
 
@@ -40,10 +40,10 @@ export async function generateNewEvent(history: string[], days: number): Promise
     });
 
     const data = JSON.parse(storyResponse.text || "{}");
-    
+
     // Character Image Generation with fallback
     let imageUrl = `https://picsum.photos/seed/${encodeURIComponent(data.character || 'default')}/400/400`;
-    
+
     try {
       const imagePrompt = `A satirical, high-contrast, bold character portrait for a Korean real estate game. Character: ${data.character}. Appearance: ${data.visualDescription}. Expressive, stylized, flat colors, clean background.`;
       const imageResponse = await ai.models.generateContent({
