@@ -180,7 +180,7 @@ export const App: React.FC = () => {
         <div className="flex justify-between w-full items-center mb-2">
           <div className="flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-white/40" />
-            <h1 className="text-[10px] font-black tracking-[0.2em] text-white/40 uppercase italic">Hero's Registry</h1>
+            <h1 className="text-[10px] font-black tracking-[0.2em] text-white/40 uppercase italic">SEOUL LAND</h1>
           </div>
           <div className="px-3 py-1 bg-white/5 rounded-full border border-white/10 text-[10px] font-black text-white/60">
             DAY {state.daysSurvived}
