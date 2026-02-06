@@ -2,8 +2,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { StatBar } from './components/StatBar.tsx';
 import { GameCard } from './components/GameCard.tsx';
-import { GameCard as IGameCard, GameState, StatType, Stats, HeroStage, CardChoice } from './types.ts';
-import { INITIAL_STATS, PRESET_CARDS } from './constants.ts';
+import { GameCard as IGameCard, GameState, StatType, Stats, HeroStage, CardChoice, GameOverKey } from './types.ts';
+import { INITIAL_STATS, PRESET_CARDS, FINAL_CARDS } from './constants.ts';
 import { generateNewEvent, generateGameOverSummary, getHeroStage } from './services/geminiService.ts';
 import { RefreshCw, Skull, Loader2, ArrowRight, BookOpen } from 'lucide-react';
 
@@ -37,16 +37,32 @@ export const App: React.FC = () => {
   const [nextCard, setNextCard] = useState<IGameCard | null>(null);
   const [outcome, setOutcome] = useState<{ text: string; feedback: string } | null>(null);
   const [deathSummary, setDeathSummary] = useState<string>('');
+  const [pendingGameOver, setPendingGameOver] = useState<{ key: GameOverKey; reason: string; stats: Stats; days: number } | null>(null);
+  const [pendingSummary, setPendingSummary] = useState<string>('');
+  const [finalChoiceMade, setFinalChoiceMade] = useState(false);
+
+  const GAME_OVER_TEXT: Record<GameOverKey, string> = {
+    ASSET_LOW: "[노숙자 엔딩] 전 재산을 탕진하고 서울역 신문지 위로 이사했습니다.",
+    ASSET_HIGH: "[사회적 타살 엔딩] 투기꾼으로 낙인찍혀 자산이 몰수되고 사회적으로 매장당했습니다.",
+    MENTAL_LOW: "[해탈 엔딩] 부동산 우울증으로 속세를 끊고 무소유 수행자가 되었습니다.",
+    MENTAL_HIGH: "[자연인 엔딩] 시장을 초월한 척하다가 진짜 산으로 들어갔습니다.",
+    FOMO_LOW: "[벼락거지 엔딩] 세상 물정 모르는 벼락거지로 고립되었습니다.",
+    FOMO_HIGH: "[야반도주 엔딩] 영끌의 광기에 휩쓸려 빚만 남기고 야반도주했습니다.",
+    HEALTH_LOW: "[돌연사 엔딩] 과로와 스트레스가 한꺼번에 터져 전세금보다 먼저 심장이 나갔습니다.",
+    HEALTH_HIGH: "[장수 엔딩] 무병장수로 살아남아 집값 그래프만 지켜봤습니다.",
+    REGULATION: "[적자 엔딩] 징벌적 과세와 규제로 숨만 쉬어도 적자입니다.",
+    SCAM: "[사기 피해 엔딩] 기획부동산에 당해 남은 전세금까지 탈탈 털렸습니다."
+  };
 
   const checkGameOver = (newStats: Stats) => {
-    if (newStats[StatType.ASSET] <= 0) return "[노숙자 엔딩] 전 재산을 탕진하고 서울역 신문지 위로 이사했습니다.";
-    if (newStats[StatType.ASSET] >= 100) return "[사회적 타살 엔딩] 투기꾼으로 낙인찍혀 자산이 몰수되고 사회적으로 매장당했습니다.";
-    if (newStats[StatType.MENTAL] <= 0) return "[해탈 엔딩] 부동산 우울증으로 속세를 끊고 무소유 수행자가 되었습니다.";
-    if (newStats[StatType.MENTAL] >= 100) return "[자연인 엔딩] 시장을 초월한 척하다가 진짜 산으로 들어갔습니다.";
-    if (newStats[StatType.FOMO] <= 0) return "[벼락거지 엔딩] 세상 물정 모르는 벼락거지로 고립되었습니다.";
-    if (newStats[StatType.FOMO] >= 100) return "[야반도주 엔딩] 영끌의 광기에 휩쓸려 빚만 남기고 야반도주했습니다.";
-    if (newStats[StatType.HEALTH] <= 0) return "[돌연사 엔딩] 과로와 스트레스가 한꺼번에 터져 전세금보다 먼저 심장이 나갔습니다.";
-    if (newStats[StatType.HEALTH] >= 100) return "[장수 엔딩] 무병장수로 살아남아 집값 그래프만 지켜봤습니다.";
+    if (newStats[StatType.ASSET] <= 0) return { key: "ASSET_LOW" as GameOverKey, reason: GAME_OVER_TEXT.ASSET_LOW };
+    if (newStats[StatType.ASSET] >= 100) return { key: "ASSET_HIGH" as GameOverKey, reason: GAME_OVER_TEXT.ASSET_HIGH };
+    if (newStats[StatType.MENTAL] <= 0) return { key: "MENTAL_LOW" as GameOverKey, reason: GAME_OVER_TEXT.MENTAL_LOW };
+    if (newStats[StatType.MENTAL] >= 100) return { key: "MENTAL_HIGH" as GameOverKey, reason: GAME_OVER_TEXT.MENTAL_HIGH };
+    if (newStats[StatType.FOMO] <= 0) return { key: "FOMO_LOW" as GameOverKey, reason: GAME_OVER_TEXT.FOMO_LOW };
+    if (newStats[StatType.FOMO] >= 100) return { key: "FOMO_HIGH" as GameOverKey, reason: GAME_OVER_TEXT.FOMO_HIGH };
+    if (newStats[StatType.HEALTH] <= 0) return { key: "HEALTH_LOW" as GameOverKey, reason: GAME_OVER_TEXT.HEALTH_LOW };
+    if (newStats[StatType.HEALTH] >= 100) return { key: "HEALTH_HIGH" as GameOverKey, reason: GAME_OVER_TEXT.HEALTH_HIGH };
     return null;
   };
 
@@ -67,25 +83,41 @@ export const App: React.FC = () => {
     setPreviewImpact(null);
 
     const choice = side === 'left' ? state.currentCard.leftChoice : state.currentCard.rightChoice;
+
+    if (state.currentCard.isFinal && pendingGameOver) {
+      setOutcome({ text: choice.outcome, feedback: choice.feedback });
+      setFinalChoiceMade(true);
+      return;
+    }
+
     const newStats = { ...state.stats };
 
     Object.entries(choice.impact).forEach(([type, value]) => {
       newStats[type as StatType] = Math.max(0, Math.min(100, (newStats[type as StatType] || 0) + (value || 0)));
     });
 
-    const gameOverReason = choice.gameOverReason || checkGameOver(newStats);
+    const immediateKey = choice.gameOverKey;
+    const immediateReason = choice.gameOverReason || (immediateKey ? GAME_OVER_TEXT[immediateKey] : null);
+    const statGameOver = checkGameOver(newStats);
+    const gameOver = immediateKey
+      ? { key: immediateKey, reason: immediateReason || GAME_OVER_TEXT[immediateKey] }
+      : statGameOver;
+
+    const gameOverReason = gameOver?.reason || null;
     setOutcome({ text: choice.outcome, feedback: choice.feedback });
 
-    if (gameOverReason) {
-      // End immediately; load summary with timeout so we never block the UI.
+    if (gameOver && gameOverReason) {
       setState(prev => ({
         ...prev,
         stats: newStats,
-        isGameOver: true,
-        gameOverReason,
+        history: [...prev.history, prev.currentCard!.dialogue],
         daysSurvived: prev.daysSurvived + 1
       }));
-      setDeathSummary("서울의 콘크리트 숲 아래 당신의 이름은 잊혀졌습니다.");
+
+      const finalCard = FINAL_CARDS[gameOver.key];
+      setNextCard(finalCard);
+      setPendingGameOver({ key: gameOver.key, reason: gameOverReason, stats: newStats, days: state.daysSurvived + 1 });
+      setPendingSummary("서울의 콘크리트 숲 아래 당신의 이름은 잊혀졌습니다.");
       setLoading(true);
 
       const summaryPromise = generateGameOverSummary(newStats, state.daysSurvived + 1, gameOverReason);
@@ -95,9 +127,9 @@ export const App: React.FC = () => {
 
       try {
         const summary = await Promise.race([summaryPromise, timeoutPromise]);
-        setDeathSummary(summary);
+        setPendingSummary(summary);
       } catch {
-        setDeathSummary("다음 생엔 청약 당첨되시길 바랍니다.");
+        setPendingSummary("다음 생엔 청약 당첨되시길 바랍니다.");
       } finally {
         setLoading(false);
       }
@@ -149,6 +181,20 @@ export const App: React.FC = () => {
   };
 
   const proceedToNext = () => {
+    if (finalChoiceMade && pendingGameOver) {
+      setState(prev => ({
+        ...prev,
+        isGameOver: true,
+        gameOverReason: pendingGameOver.reason
+      }));
+      setDeathSummary(pendingSummary || "다음 생엔 청약 당첨되시길 바랍니다.");
+      setFinalChoiceMade(false);
+      setPendingGameOver(null);
+      setNextCard(null);
+      setOutcome(null);
+      return;
+    }
+
     if (nextCard) {
       setState(prev => ({ ...prev, currentCard: nextCard }));
       setNextCard(null);
@@ -184,6 +230,9 @@ export const App: React.FC = () => {
     setNextCard(null);
     setDeathSummary('');
     setLoading(false);
+    setPendingGameOver(null);
+    setPendingSummary('');
+    setFinalChoiceMade(false);
   };
 
   return (

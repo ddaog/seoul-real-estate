@@ -1,5 +1,5 @@
 
-import { GameCard, StatType, CharacterArchetype, HeroStage } from './types.ts';
+import { GameCard, StatType, CharacterArchetype, HeroStage, GameOverKey } from './types.ts';
 
 export const INITIAL_STATS = {
   [StatType.ASSET]: 50,
@@ -194,7 +194,8 @@ export const PRESET_CARDS: GameCard[] = [
       impact: { [StatType.ASSET]: -25, [StatType.HEALTH]: -5, [StatType.FOMO]: 10 },
       feedback: "웃돈 결제",
       outcome: "합법적으로 신고할 수 없는 돈이 오갔습니다. 공범이 되었습니다.",
-      gameOverReason: "[사기 피해 엔딩] 기획부동산에 당해 남은 전세금까지 탈탈 털렸습니다."
+      gameOverReason: "[사기 피해 엔딩] 기획부동산에 당해 남은 전세금까지 탈탈 털렸습니다.",
+      gameOverKey: "SCAM"
     }
   },
 
@@ -315,7 +316,8 @@ export const PRESET_CARDS: GameCard[] = [
       impact: { [StatType.ASSET]: -20, [StatType.MENTAL]: -10, [StatType.HEALTH]: -5 },
       feedback: "정직한 납세",
       outcome: "3천만원 고지서가 도착했습니다. 보너스가 통째로 사라졌습니다.",
-      gameOverReason: "[적자 엔딩] 징벌적 과세와 규제로 숨만 쉬어도 적자입니다."
+      gameOverReason: "[적자 엔딩] 징벌적 과세와 규제로 숨만 쉬어도 적자입니다.",
+      gameOverKey: "REGULATION"
     },
     rightChoice: {
       text: "법인 전환!",
@@ -455,3 +457,113 @@ export const PRESET_CARDS: GameCard[] = [
     }
   }
 ];
+
+const FINAL_CHOICE = (text: string, feedback: string, outcome: string) => ({
+  text,
+  impact: {},
+  feedback,
+  outcome,
+});
+
+export const FINAL_CARDS: Record<GameOverKey, GameCard> = {
+  ASSET_LOW: {
+    id: 'final-asset-low',
+    character: '서울역 담요 상인',
+    archetype: CharacterArchetype.SHADOW,
+    image: 'https://picsum.photos/seed/asset_low_final/400/400',
+    dialogue: "당신 통장 잔고가 0을 찍었습니다. 마지막으로 담요 한 장 살 건가요?",
+    leftChoice: FINAL_CHOICE("살게요", "끝의 끝", "신문지를 깔고 누웠습니다. 서울의 밤바람이 차갑습니다."),
+    rightChoice: FINAL_CHOICE("말게요", "끝의 끝", "신문지를 깔고 누웠습니다. 서울의 밤바람이 차갑습니다."),
+    isFinal: true
+  },
+  ASSET_HIGH: {
+    id: 'final-asset-high',
+    character: '국세청 특별조사관',
+    archetype: CharacterArchetype.GUARDIAN,
+    image: 'https://picsum.photos/seed/asset_high_final/400/400',
+    dialogue: "투기 의혹이 확정됐습니다. 자산 동결과 압류 통지서가 도착했습니다.",
+    leftChoice: FINAL_CHOICE("서류를 연다", "도장 찍힌 파국", "압류 목록이 길게 이어집니다."),
+    rightChoice: FINAL_CHOICE("서류를 연다", "도장 찍힌 파국", "압류 목록이 길게 이어집니다."),
+    isFinal: true
+  },
+  MENTAL_LOW: {
+    id: 'final-mental-low',
+    character: '커뮤니티 새벽 알림',
+    archetype: CharacterArchetype.SHADOW,
+    image: 'https://picsum.photos/seed/mental_low_final/400/400',
+    dialogue: "새벽 4시, 알림은 또 울립니다. 더는 버틸 마음이 남아있나요?",
+    leftChoice: FINAL_CHOICE("끄겠습니다", "전원 OFF", "휴대폰이 꺼지고 세상이 조용해졌습니다."),
+    rightChoice: FINAL_CHOICE("끄겠습니다", "전원 OFF", "휴대폰이 꺼지고 세상이 조용해졌습니다."),
+    isFinal: true
+  },
+  MENTAL_HIGH: {
+    id: 'final-mental-high',
+    character: '산속의 당신',
+    archetype: CharacterArchetype.MENTOR,
+    image: 'https://picsum.photos/seed/mental_high_final/400/400',
+    dialogue: "모든 것이 덧없다는 결론에 도달했습니다. 도시를 떠날 준비가 되셨나요?",
+    leftChoice: FINAL_CHOICE("떠납니다", "해탈", "서울의 소음이 멀어지고 산바람만 남습니다."),
+    rightChoice: FINAL_CHOICE("떠납니다", "해탈", "서울의 소음이 멀어지고 산바람만 남습니다."),
+    isFinal: true
+  },
+  FOMO_LOW: {
+    id: 'final-fomo-low',
+    character: '단톡방 속보',
+    archetype: CharacterArchetype.HERALD,
+    image: 'https://picsum.photos/seed/fomo_low_final/400/400',
+    dialogue: "상급지 등기 인증이 쏟아집니다. 당신은 이미 대화에서 사라졌습니다.",
+    leftChoice: FINAL_CHOICE("읽지 않음", "고립", "대화창에 당신의 이름은 더 이상 없습니다."),
+    rightChoice: FINAL_CHOICE("읽지 않음", "고립", "대화창에 당신의 이름은 더 이상 없습니다."),
+    isFinal: true
+  },
+  FOMO_HIGH: {
+    id: 'final-fomo-high',
+    character: '금리 인상 공문',
+    archetype: CharacterArchetype.GUARDIAN,
+    image: 'https://picsum.photos/seed/fomo_high_final/400/400',
+    dialogue: "변동금리 인상 통지가 도착했습니다. 감당 가능한 수준이 아닙니다.",
+    leftChoice: FINAL_CHOICE("버틴다", "붕괴", "숨만 쉬어도 이자가 늘어납니다."),
+    rightChoice: FINAL_CHOICE("버틴다", "붕괴", "숨만 쉬어도 이자가 늘어납니다."),
+    isFinal: true
+  },
+  HEALTH_LOW: {
+    id: 'final-health-low',
+    character: '야근 알림',
+    archetype: CharacterArchetype.SHADOW,
+    image: 'https://picsum.photos/seed/health_low_final/400/400',
+    dialogue: "오늘도 야근입니다. 당신의 체력은 이미 바닥입니다.",
+    leftChoice: FINAL_CHOICE("출근한다", "몸의 파업", "몸이 먼저 멈췄습니다."),
+    rightChoice: FINAL_CHOICE("출근한다", "몸의 파업", "몸이 먼저 멈췄습니다."),
+    isFinal: true
+  },
+  HEALTH_HIGH: {
+    id: 'final-health-high',
+    character: '장수 뉴스',
+    archetype: CharacterArchetype.HERALD,
+    image: 'https://picsum.photos/seed/health_high_final/400/400',
+    dialogue: "당신은 모든 난관을 견뎌냈습니다. 이제 집값 그래프만 남았습니다.",
+    leftChoice: FINAL_CHOICE("지켜본다", "장수", "역사는 반복되고 그래프는 오릅니다."),
+    rightChoice: FINAL_CHOICE("지켜본다", "장수", "역사는 반복되고 그래프는 오릅니다."),
+    isFinal: true
+  },
+  REGULATION: {
+    id: 'final-regulation',
+    character: '보유세 고지서',
+    archetype: CharacterArchetype.GUARDIAN,
+    image: 'https://picsum.photos/seed/regulation_final/400/400',
+    dialogue: "징벌적 과세 통지서가 도착했습니다. 숨만 쉬어도 적자입니다.",
+    leftChoice: FINAL_CHOICE("받아든다", "질식", "서류 더미가 목을 조입니다."),
+    rightChoice: FINAL_CHOICE("받아든다", "질식", "서류 더미가 목을 조입니다."),
+    isFinal: true
+  },
+  SCAM: {
+    id: 'final-scam',
+    character: '기획부동산 영업팀',
+    archetype: CharacterArchetype.SHADOW,
+    image: 'https://picsum.photos/seed/scam_final/400/400',
+    dialogue: "등기 서류를 펼치자 지도에도 없는 땅이 찍혀 있습니다.",
+    leftChoice: FINAL_CHOICE("멍하니 선다", "허탈", "남은 전세금까지 탈탈 털렸습니다."),
+    rightChoice: FINAL_CHOICE("멍하니 선다", "허탈", "남은 전세금까지 탈탈 털렸습니다."),
+    isFinal: true
+  }
+};

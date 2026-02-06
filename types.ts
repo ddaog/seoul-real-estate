@@ -29,12 +29,25 @@ export enum CharacterArchetype {
   ALLY = "ALLY"              // 동료/친구
 }
 
+export type GameOverKey =
+  | "ASSET_LOW"
+  | "ASSET_HIGH"
+  | "MENTAL_LOW"
+  | "MENTAL_HIGH"
+  | "FOMO_LOW"
+  | "FOMO_HIGH"
+  | "HEALTH_LOW"
+  | "HEALTH_HIGH"
+  | "REGULATION"
+  | "SCAM";
+
 export interface CardChoice {
   text: string;
   impact: Partial<Record<StatType, number>>;
   feedback: string;
   outcome: string;
   gameOverReason?: string;
+  gameOverKey?: GameOverKey;
 }
 
 export interface GameCard {
@@ -46,6 +59,7 @@ export interface GameCard {
   leftChoice: CardChoice;
   rightChoice: CardChoice;
   stages?: HeroStage[]; // The stages where this card can appear
+  isFinal?: boolean;
 }
 
 export interface Stats {
