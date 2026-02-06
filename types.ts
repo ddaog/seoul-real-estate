@@ -45,6 +45,7 @@ export interface GameCard {
   dialogue: string;
   leftChoice: CardChoice;
   rightChoice: CardChoice;
+  stages?: HeroStage[]; // The stages where this card can appear
 }
 
 export interface Stats {

@@ -1,5 +1,5 @@
 
-import { GameCard, StatType, CharacterArchetype } from './types.ts';
+import { GameCard, StatType, CharacterArchetype, HeroStage } from './types.ts';
 
 export const INITIAL_STATS = {
   [StatType.ASSET]: 50,
@@ -14,6 +14,7 @@ export const PRESET_CARDS: GameCard[] = [
     id: 'ordinary-1',
     character: '회사 동료 김대리',
     archetype: CharacterArchetype.ALLY,
+    stages: [HeroStage.ORDINARY_WORLD],
     image: 'https://picsum.photos/seed/friendly_colleague_kim/400/400',
     dialogue: `"야, 너만 빼고 동기들 다 '상급지' 갈아탔어. 어제도 누구는 잠실리 급매 잡았다던데, 넌 평생 월세만 낼 거야?"`,
     leftChoice: {
@@ -33,6 +34,7 @@ export const PRESET_CARDS: GameCard[] = [
     id: 'ordinary-2',
     character: '어머니',
     archetype: CharacterArchetype.GUARDIAN,
+    stages: [HeroStage.ORDINARY_WORLD],
     image: 'https://picsum.photos/seed/worried_mom/400/400',
     dialogue: `"얘야, 이제 결혼도 생각해야지? 요즘 집 없으면 만나주지도 않는대. 우리 전세금 빼서 너 아파트 계약금 보태줄까?"`,
     leftChoice: {
@@ -52,6 +54,7 @@ export const PRESET_CARDS: GameCard[] = [
     id: 'ordinary-3',
     character: '월세 집주인',
     archetype: CharacterArchetype.HERALD,
+    stages: [HeroStage.ORDINARY_WORLD],
     image: 'https://picsum.photos/seed/landlord/400/400',
     dialogue: `"다음 달부터 월세 10만원 올립니다. 이 동네 시세가 다 올랐어요. 싫으면 나가셔도 돼요."`,
     leftChoice: {
@@ -73,6 +76,7 @@ export const PRESET_CARDS: GameCard[] = [
     id: 'call-1',
     character: '부동산 유튜버',
     archetype: CharacterArchetype.HERALD,
+    stages: [HeroStage.CALL_TO_ADVENTURE],
     image: 'https://picsum.photos/seed/youtube_realtor/400/400',
     dialogue: `"여러분! 지금이 마지막 기회입니다. 3기 신도시 발표 나면 이 가격 다신 못 봐요. 지금 안 사면 평생 후회합니다!"`,
     leftChoice: {
@@ -92,6 +96,7 @@ export const PRESET_CARDS: GameCard[] = [
     id: 'call-2',
     character: '은행 대출 상담사',
     archetype: CharacterArchetype.GUARDIAN,
+    stages: [HeroStage.CALL_TO_ADVENTURE],
     image: 'https://picsum.photos/seed/bank_consultant/400/400',
     dialogue: `"DSR 규제 전에 최대한 많이 받아두세요. 지금 안 받으면 나중엔 못 받습니다. LTV 70% 가능하신데요?"`,
     leftChoice: {
@@ -113,6 +118,7 @@ export const PRESET_CARDS: GameCard[] = [
     id: 'refusal-1',
     character: '경제학과 교수',
     archetype: CharacterArchetype.MENTOR,
+    stages: [HeroStage.REFUSAL_OF_CALL],
     image: 'https://picsum.photos/seed/economics_professor/400/400',
     dialogue: `"이건 명백한 거품입니다. 역사적으로 이런 상승은 언제나 폭락으로 끝났죠. 참고 기다리세요."`,
     leftChoice: {
@@ -132,6 +138,7 @@ export const PRESET_CARDS: GameCard[] = [
     id: 'refusal-2',
     character: '배우자',
     archetype: CharacterArchetype.ALLY,
+    stages: [HeroStage.REFUSAL_OF_CALL],
     image: 'https://picsum.photos/seed/worried_spouse/400/400',
     dialogue: `"여보, 우리 빚내서까지 집 사야 해? 나는 무서워. 그냥 전세로 살면 안 될까?"`,
     leftChoice: {
@@ -153,6 +160,7 @@ export const PRESET_CARDS: GameCard[] = [
     id: 'mentor-1',
     character: '은둔 고수 재테크 블로거',
     archetype: CharacterArchetype.MENTOR,
+    stages: [HeroStage.MENTOR],
     image: 'https://picsum.photos/seed/finance_guru/400/400',
     dialogue: `"핵심은 '현금흐름'입니다. 갭투자로 월세 받으면서 시세차익도 노리세요. 나는 이렇게 10채를 모았습니다."`,
     leftChoice: {
@@ -172,6 +180,7 @@ export const PRESET_CARDS: GameCard[] = [
     id: 'mentor-2',
     character: '노련한 공인중개사',
     archetype: CharacterArchetype.MENTOR,
+    stages: [HeroStage.MENTOR],
     image: 'https://picsum.photos/seed/experienced_broker/400/400',
     dialogue: `"역에서 10분 거리, 학군 좋고, 재건축 기대까지. 이런 물건은 10년에 한 번 나옵니다. 단, 프리미엄 3천 있어요."`,
     leftChoice: {
@@ -193,6 +202,7 @@ export const PRESET_CARDS: GameCard[] = [
     id: 'threshold-1',
     character: '법무사',
     archetype: CharacterArchetype.GUARDIAN,
+    stages: [HeroStage.THRESHOLD],
     image: 'https://picsum.photos/seed/lawyer_notary/400/400',
     dialogue: `"계약서에 도장 찍기 전 마지막으로 여쭙니다. 정말 괜찮으시겠습니까? 이 결정은 되돌릴 수 없습니다."`,
     leftChoice: {
@@ -212,6 +222,7 @@ export const PRESET_CARDS: GameCard[] = [
     id: 'threshold-2',
     character: '첫 등기부등본',
     archetype: CharacterArchetype.HERALD,
+    stages: [HeroStage.THRESHOLD],
     image: 'https://picsum.photos/seed/property_deed/400/400',
     dialogue: `"축하합니다! 서울시 XX구 XX동 XXX-X, 전용면적 59㎡의 소유자가 되셨습니다. (근저당 2억)"`,
     leftChoice: {
@@ -233,6 +244,7 @@ export const PRESET_CARDS: GameCard[] = [
     id: 'test-1',
     character: '부동산 카페 회원',
     archetype: CharacterArchetype.ALLY,
+    stages: [HeroStage.TESTS],
     image: 'https://picsum.photos/seed/cafe_member/400/400',
     dialogue: `"형님, 이번 주말 임장 같이 가실래요? 저는 분당 보고, 형님은 어디 보세요? 정보 공유해요!"`,
     leftChoice: {
@@ -252,6 +264,7 @@ export const PRESET_CARDS: GameCard[] = [
     id: 'test-2',
     character: '세입자',
     archetype: CharacterArchetype.SHADOW,
+    stages: [HeroStage.TESTS],
     image: 'https://picsum.photos/seed/difficult_tenant/400/400',
     dialogue: `"집주인님, 저 경제적으로 힘들어서... 이번 달 월세 좀 늦춰도 될까요? 다음 달에 꼭 드릴게요."`,
     leftChoice: {
@@ -273,6 +286,7 @@ export const PRESET_CARDS: GameCard[] = [
     id: 'approach-1',
     character: '금융당국 발표',
     archetype: CharacterArchetype.HERALD,
+    stages: [HeroStage.APPROACH],
     image: 'https://picsum.photos/seed/government_announcement/400/400',
     dialogue: `"[속보] 정부, DSR 40% 강화 및 다주택자 대출 전면 금지 발표. 내일 0시부터 시행."`,
     leftChoice: {
@@ -292,6 +306,7 @@ export const PRESET_CARDS: GameCard[] = [
     id: 'approach-2',
     character: '세무사',
     archetype: CharacterArchetype.GUARDIAN,
+    stages: [HeroStage.APPROACH],
     image: 'https://picsum.photos/seed/tax_accountant/400/400',
     dialogue: `"종부세 폭탄 맞으시겠는데요? 법인으로 전환하시거나, 아니면 한 채 정리하세요. 아니면..."`,
     leftChoice: {
@@ -313,6 +328,7 @@ export const PRESET_CARDS: GameCard[] = [
     id: 'ordeal-1',
     character: '뉴스 속보',
     archetype: CharacterArchetype.HERALD,
+    stages: [HeroStage.ORDEAL],
     image: 'https://picsum.photos/seed/breaking_news/400/400',
     dialogue: `"[단독] 서울 아파트 매매가 3개월 연속 하락. 전문가들 '조정 아닌 폭락 시작' 경고"`,
     leftChoice: {
@@ -332,6 +348,7 @@ export const PRESET_CARDS: GameCard[] = [
     id: 'ordeal-2',
     character: '대출 은행 담당자',
     archetype: CharacterArchetype.SHADOW,
+    stages: [HeroStage.ORDEAL],
     image: 'https://picsum.photos/seed/bank_officer/400/400',
     dialogue: `"고객님, 담보가치 재평가 결과 현재 LTV가 80%를 넘었습니다. 2주 내로 5천만원 상환 부탁드립니다."`,
     leftChoice: {
@@ -348,11 +365,12 @@ export const PRESET_CARDS: GameCard[] = [
     }
   },
 
-  // Stage 9-12: 추가 카드들 (보상, 귀로, 부활, 귀환)
+  // Stage 9: 보상 (DAY 40-44)
   {
     id: 'reward-1',
     character: '재개발 조합 이사',
     archetype: CharacterArchetype.HERALD,
+    stages: [HeroStage.REWARD],
     image: 'https://picsum.photos/seed/redevelopment_union/400/400',
     dialogue: `"축하합니다! 재개발 통과됐습니다. 현재 시세보다 3배는 받으실 겁니다. 조합비만 2천 추가로..."`,
     leftChoice: {
@@ -368,10 +386,57 @@ export const PRESET_CARDS: GameCard[] = [
       outcome: "재개발 프리미엄에 매도했습니다. 1년 뒤 실제로 재개발이 무산됐다는 소식을 듣습니다."
     }
   },
+
+  // Stage 10: 귀로 (DAY 45-49)
+  {
+    id: 'road-back-1',
+    character: '국세청 등기우편',
+    archetype: CharacterArchetype.SHADOW,
+    stages: [HeroStage.ROAD_BACK],
+    image: 'https://picsum.photos/seed/tax_mail/400/400',
+    dialogue: `"귀하의 자금출처조사 소명 안내문입니다. 3년 전 구입한 아파트의 자금 흐름이 불투명합니다."`,
+    leftChoice: {
+      text: "세무사에게 위임한다",
+      impact: { [StatType.ASSET]: -15, [StatType.REGULATION]: 20, [StatType.MENTAL]: -5 },
+      feedback: "전문가의 조력",
+      outcome: "수임료 1500만원이 들었지만, 다행히 세무조사는 무마되었습니다."
+    },
+    rightChoice: {
+      text: "직접 소명한다",
+      impact: { [StatType.MENTAL]: -25, [StatType.ASSET]: -5, [StatType.FOMO]: 5 },
+      feedback: "맨땅에 헤딩",
+      outcome: "3달간의 싸움 끝에 500만원 추징금으로 막았습니다. 하지만 흰머리가 부쩍 늘었습니다."
+    }
+  },
+
+  // Stage 11: 부활 (DAY 50-54)
+  {
+    id: 'resurrection-1',
+    character: '부동산 폭락장',
+    archetype: CharacterArchetype.SHADOW,
+    stages: [HeroStage.RESURRECTION],
+    image: 'https://picsum.photos/seed/market_crash/400/400',
+    dialogue: `"금리 8%, 서울 집값 40% 폭락. 모든 사람이 공포에 질려 던지고 있습니다. 당신의 선택은?"`,
+    leftChoice: {
+      text: "공포를 이기고 줍줍!",
+      impact: { [StatType.ASSET]: -20, [StatType.FOMO]: -20, [StatType.MENTAL]: -20 },
+      feedback: "용기 있는 베팅",
+      outcome: "모두가 미쳤다고 했습니다. 하지만 당신은 알고 있습니다. 이것이 부의 추월차선임을."
+    },
+    rightChoice: {
+      text: "일단 현금 확보...",
+      impact: { [StatType.ASSET]: -10, [StatType.MENTAL]: 10, [StatType.REGULATION]: 5 },
+      feedback: "안전제일",
+      outcome: "살아남는 것이 강한 것입니다. 쓰나미가 지나갈 때까지 고지대로 피신합니다."
+    }
+  },
+
+  // Stage 12: 영약과 귀환 (DAY 55+)
   {
     id: 'return-1',
     character: '10년 후의 당신',
     archetype: CharacterArchetype.MENTOR,
+    stages: [HeroStage.RETURN],
     image: 'https://picsum.photos/seed/future_self/400/400',
     dialogue: `"돌이켜보니 그 선택들이 나를 만들었어. 후회는... 글쎄, 해봤자 의미 없지. 이제 다음 세대에게 뭘 남길까?"`,
     leftChoice: {

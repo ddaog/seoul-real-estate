@@ -82,19 +82,41 @@ export const App: React.FC = () => {
     setLoading(true);
     try {
       const generated = await generateNewEvent([...state.history, state.currentCard.dialogue], state.daysSurvived + 1);
-      const finalNext = generated || PRESET_CARDS[Math.floor(Math.random() * PRESET_CARDS.length)];
+      const nextStage = getHeroStage(state.daysSurvived + 1);
+
+      // Fallback logic for stage-based selection
+      const stageCards = PRESET_CARDS.filter(c => c.stages?.includes(nextStage));
+      const fallbackCard = stageCards.length > 0
+        ? stageCards[Math.floor(Math.random() * stageCards.length)]
+        : PRESET_CARDS[Math.floor(Math.random() * PRESET_CARDS.length)];
+
+      const finalNext = generated || fallbackCard;
       setNextCard(finalNext);
-      
+
       setState(prev => ({
         ...prev,
         stats: newStats,
         history: [...prev.history, prev.currentCard!.dialogue],
         daysSurvived: prev.daysSurvived + 1,
-        currentStage: getHeroStage(prev.daysSurvived + 1)
+        currentStage: nextStage
       }));
     } catch (err) {
       console.error(err);
-      setNextCard(PRESET_CARDS[Math.floor(Math.random() * PRESET_CARDS.length)]);
+
+      const nextStage = getHeroStage(state.daysSurvived + 1);
+      const stageCards = PRESET_CARDS.filter(c => c.stages?.includes(nextStage));
+      const fallbackCard = stageCards.length > 0
+        ? stageCards[Math.floor(Math.random() * stageCards.length)]
+        : PRESET_CARDS[Math.floor(Math.random() * PRESET_CARDS.length)];
+
+      setNextCard(fallbackCard);
+      setState(prev => ({
+        ...prev,
+        stats: newStats,
+        history: [...prev.history, prev.currentCard!.dialogue],
+        daysSurvived: prev.daysSurvived + 1,
+        currentStage: nextStage
+      }));
     } finally {
       setLoading(false);
     }
@@ -106,8 +128,17 @@ export const App: React.FC = () => {
       setNextCard(null);
       setOutcome(null);
     } else if (!loading) {
-      // If next card didn't load for some reason, pick from preset
-      const fallback = PRESET_CARDS[Math.floor(Math.random() * PRESET_CARDS.length)];
+      // If next card didn't load for some reason, pick from preset based on stage
+      const currentStage = state.currentStage; // Use current stage since we haven't advanced days yet if we are just recovering
+      // Actually proceedToNext is called AFTER state update in handleChoice, so state.currentStage is already next stage?
+      // No, setState in handleChoice updates state, but is async.
+      // Wait, handleChoice calls setState, so when proceedToNext is called (by user click), state should be updated.
+
+      const stageCards = PRESET_CARDS.filter(c => c.stages?.includes(state.currentStage));
+      const fallback = stageCards.length > 0
+        ? stageCards[Math.floor(Math.random() * stageCards.length)]
+        : PRESET_CARDS[Math.floor(Math.random() * PRESET_CARDS.length)];
+
       setState(prev => ({ ...prev, currentCard: fallback }));
       setOutcome(null);
     }
@@ -139,7 +170,7 @@ export const App: React.FC = () => {
             <h1 className="text-[10px] font-black tracking-[0.2em] text-white/40 uppercase italic">Hero's Registry</h1>
           </div>
           <div className="px-3 py-1 bg-white/5 rounded-full border border-white/10 text-[10px] font-black text-white/60">
-             DAY {state.daysSurvived}
+            DAY {state.daysSurvived}
           </div>
         </div>
         <StatBar stats={state.stats} />
@@ -168,30 +199,30 @@ export const App: React.FC = () => {
           </div>
         ) : outcome ? (
           <div className="w-full max-w-sm flex flex-col items-center animate-in fade-in slide-in-from-bottom-4 duration-500">
-             <div className="w-full aspect-[4/3] rounded-[2rem] overflow-hidden mb-6 shadow-2xl border border-white/10 relative shrink-0">
-                <img src={state.currentCard?.image} className="w-full h-full object-cover blur-xl brightness-50 scale-110" />
-                <div className="absolute inset-0 flex items-center justify-center p-8 text-center bg-black/40">
-                   <p className="text-2xl font-black text-white leading-tight italic drop-shadow-2xl">"{outcome.feedback}"</p>
-                </div>
-             </div>
-             <div className="bg-zinc-900/80 backdrop-blur-xl p-8 rounded-[2rem] border border-white/10 shadow-2xl w-full mb-8">
-                <p className="text-lg text-zinc-100 leading-relaxed font-semibold text-center">{outcome.text}</p>
-             </div>
-             <button 
-              onClick={proceedToNext} 
+            <div className="w-full aspect-[4/3] rounded-[2rem] overflow-hidden mb-6 shadow-2xl border border-white/10 relative shrink-0">
+              <img src={state.currentCard?.image} className="w-full h-full object-cover blur-xl brightness-50 scale-110" />
+              <div className="absolute inset-0 flex items-center justify-center p-8 text-center bg-black/40">
+                <p className="text-2xl font-black text-white leading-tight italic drop-shadow-2xl">"{outcome.feedback}"</p>
+              </div>
+            </div>
+            <div className="bg-zinc-900/80 backdrop-blur-xl p-8 rounded-[2rem] border border-white/10 shadow-2xl w-full mb-8">
+              <p className="text-lg text-zinc-100 leading-relaxed font-semibold text-center">{outcome.text}</p>
+            </div>
+            <button
+              onClick={proceedToNext}
               disabled={loading && !nextCard}
               className="w-full py-5 bg-white text-black rounded-2xl font-black text-xl flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all disabled:opacity-50"
-             >
-                {loading && !nextCard ? <Loader2 className="w-6 h-6 animate-spin" /> : <>여정을 계속하기 <ArrowRight className="w-6 h-6" /></>}
-             </button>
+            >
+              {loading && !nextCard ? <Loader2 className="w-6 h-6 animate-spin" /> : <>여정을 계속하기 <ArrowRight className="w-6 h-6" /></>}
+            </button>
           </div>
         ) : state.currentCard && (
           <div className="w-full flex flex-col items-center gap-6">
             <GameCard card={state.currentCard} onChoice={handleChoice} disabled={loading} />
             {loading && (
               <div className="flex items-center gap-3 py-2 px-4 bg-white/5 rounded-full backdrop-blur-md border border-white/5 animate-pulse">
-                 <Loader2 className="w-3 h-3 text-white/40 animate-spin" />
-                 <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.3em]">Drawing Next Chapter</span>
+                <Loader2 className="w-3 h-3 text-white/40 animate-spin" />
+                <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.3em]">Drawing Next Chapter</span>
               </div>
             )}
           </div>
