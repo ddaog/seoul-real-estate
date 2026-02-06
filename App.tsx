@@ -77,9 +77,7 @@ export const App: React.FC = () => {
     setOutcome({ text: choice.outcome, feedback: choice.feedback });
 
     if (gameOverReason) {
-      setLoading(true);
-      const summary = await generateGameOverSummary(newStats, state.daysSurvived + 1, gameOverReason);
-      setDeathSummary(summary);
+      // End immediately; load summary with timeout so we never block the UI.
       setState(prev => ({
         ...prev,
         stats: newStats,
@@ -87,7 +85,22 @@ export const App: React.FC = () => {
         gameOverReason,
         daysSurvived: prev.daysSurvived + 1
       }));
-      setLoading(false);
+      setDeathSummary("서울의 콘크리트 숲 아래 당신의 이름은 잊혀졌습니다.");
+      setLoading(true);
+
+      const summaryPromise = generateGameOverSummary(newStats, state.daysSurvived + 1, gameOverReason);
+      const timeoutPromise = new Promise<string>((resolve) =>
+        setTimeout(() => resolve("다음 생엔 청약 당첨되시길 바랍니다."), 4000)
+      );
+
+      try {
+        const summary = await Promise.race([summaryPromise, timeoutPromise]);
+        setDeathSummary(summary);
+      } catch {
+        setDeathSummary("다음 생엔 청약 당첨되시길 바랍니다.");
+      } finally {
+        setLoading(false);
+      }
       return;
     }
 
