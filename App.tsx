@@ -293,8 +293,8 @@ export const App: React.FC = () => {
           </div>
         ) : state.currentCard && (
           <div className="w-full flex flex-col items-center gap-6">
-            <GameCard card={state.currentCard} onChoice={handleChoice} disabled={loading} />
-            {loading && (
+            <GameCard card={state.currentCard} onChoice={handleChoice} disabled={loading && !pendingGameOver} />
+            {loading && !pendingGameOver && (
               <div className="flex items-center gap-3 py-2 px-4 bg-white/5 rounded-full backdrop-blur-md border border-white/5 animate-pulse">
                 <Loader2 className="w-3 h-3 text-white/40 animate-spin" />
                 <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.3em]">Drawing Next Chapter</span>
