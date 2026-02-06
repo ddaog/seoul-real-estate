@@ -34,6 +34,7 @@ export interface CardChoice {
   impact: Partial<Record<StatType, number>>;
   feedback: string;
   outcome: string;
+  gameOverReason?: string;
 }
 
 export interface GameCard {

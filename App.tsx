@@ -39,14 +39,14 @@ export const App: React.FC = () => {
   const [deathSummary, setDeathSummary] = useState<string>('');
 
   const checkGameOver = (newStats: Stats) => {
-    if (newStats[StatType.ASSET] <= 0) return "전 재산을 탕진하고 노숙자로 전락했습니다.";
-    if (newStats[StatType.ASSET] >= 100) return "투기꾼으로 낙인찍혀 사회에서 매장되었습니다.";
-    if (newStats[StatType.MENTAL] <= 0) return "부동산 스트레스로 멘탈이 붕괴되었습니다.";
-    if (newStats[StatType.MENTAL] >= 100) return "해탈의 경지에 이르러 산으로 들어갔습니다.";
-    if (newStats[StatType.FOMO] <= 0) return "시대에 뒤떨어진 벼락거지가 되었습니다.";
-    if (newStats[StatType.FOMO] >= 100) return "광기에 휩쓸려 무리한 영끌을 하다 파멸했습니다.";
-    if (newStats[StatType.HEALTH] <= 0) return "과로와 스트레스로 돌연사했습니다.";
-    if (newStats[StatType.HEALTH] >= 100) return "무병장수하며 서울 부동산의 역사를 지켜봅니다.";
+    if (newStats[StatType.ASSET] <= 0) return "[노숙자 엔딩] 전 재산을 탕진하고 서울역 신문지 위로 이사했습니다.";
+    if (newStats[StatType.ASSET] >= 100) return "[사회적 타살 엔딩] 투기꾼으로 낙인찍혀 자산이 몰수되고 사회적으로 매장당했습니다.";
+    if (newStats[StatType.MENTAL] <= 0) return "[해탈 엔딩] 부동산 우울증으로 속세를 끊고 무소유 수행자가 되었습니다.";
+    if (newStats[StatType.MENTAL] >= 100) return "[자연인 엔딩] 시장을 초월한 척하다가 진짜 산으로 들어갔습니다.";
+    if (newStats[StatType.FOMO] <= 0) return "[벼락거지 엔딩] 세상 물정 모르는 벼락거지로 고립되었습니다.";
+    if (newStats[StatType.FOMO] >= 100) return "[야반도주 엔딩] 영끌의 광기에 휩쓸려 빚만 남기고 야반도주했습니다.";
+    if (newStats[StatType.HEALTH] <= 0) return "[돌연사 엔딩] 과로와 스트레스가 한꺼번에 터져 전세금보다 먼저 심장이 나갔습니다.";
+    if (newStats[StatType.HEALTH] >= 100) return "[장수 엔딩] 무병장수로 살아남아 집값 그래프만 지켜봤습니다.";
     return null;
   };
 
@@ -73,7 +73,7 @@ export const App: React.FC = () => {
       newStats[type as StatType] = Math.max(0, Math.min(100, (newStats[type as StatType] || 0) + (value || 0)));
     });
 
-    const gameOverReason = checkGameOver(newStats);
+    const gameOverReason = choice.gameOverReason || checkGameOver(newStats);
     setOutcome({ text: choice.outcome, feedback: choice.feedback });
 
     if (gameOverReason) {
