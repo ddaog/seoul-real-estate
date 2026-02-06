@@ -31,6 +31,26 @@ const StatIcon = ({ type, impact }: { type: StatType, impact?: number }) => {
 const StatItem = ({ type, value, impact }: { type: StatType, value: number, impact?: number }) => {
   const clampedValue = Math.min(100, Math.max(0, value));
 
+  // Ghost Bar Logic
+  let ghostWidth = 0;
+  let ghostLeft = 0;
+  let isPositive = false;
+
+  if (impact) {
+    const projectedValue = Math.min(100, Math.max(0, value + impact));
+    if (projectedValue > clampedValue) {
+      // Gain: Show ghost to the right of current
+      isPositive = true;
+      ghostLeft = clampedValue;
+      ghostWidth = projectedValue - clampedValue;
+    } else {
+      // Loss: Show ghost over the part that will be lost
+      isPositive = false;
+      ghostLeft = projectedValue;
+      ghostWidth = clampedValue - projectedValue;
+    }
+  }
+
   const getLabel = (t: StatType): string => {
     switch (t) {
       case StatType.ASSET: return '자산';
@@ -43,13 +63,30 @@ const StatItem = ({ type, value, impact }: { type: StatType, value: number, impa
   return (
     <div className={`flex flex-col items-center gap-1 w-full transition-transform duration-200 ${impact ? 'scale-110' : 'scale-100'}`}>
       <StatIcon type={type} impact={impact} />
-      <div className="w-full h-2 bg-gray-700/50 rounded-full overflow-hidden border border-gray-600/50">
+
+      {/* Bar Container */}
+      <div className="w-full h-2 bg-gray-700/50 rounded-full overflow-hidden border border-gray-600/50 relative">
+        {/* Main Bar */}
         <div
-          className={`h-full transition-all duration-700 ease-in-out ${clampedValue > 85 ? 'bg-red-600 animate-pulse' : clampedValue < 15 ? 'bg-orange-500' : 'bg-white'
+          className={`absolute top-0 left-0 h-full transition-all duration-700 ease-in-out ${clampedValue > 85 ? 'bg-red-600 animate-pulse' : clampedValue < 15 ? 'bg-orange-500' : 'bg-white'
             }`}
-          style={{ width: `${clampedValue}%` }}
+          style={{ width: `${clampedValue}%`, zIndex: 10 }}
         />
+
+        {/* Ghost Bar Overlay */}
+        {impact !== undefined && impact !== 0 && (
+          <div
+            className={`absolute top-0 h-full animate-pulse transition-all duration-300 ${isPositive ? 'bg-green-400' : 'bg-red-500'}`}
+            style={{
+              left: `${ghostLeft}%`,
+              width: `${ghostWidth}%`,
+              zIndex: 20,
+              opacity: 0.8
+            }}
+          />
+        )}
       </div>
+
       <span className={`text-[10px] font-bold uppercase tracking-widest ${impact ? 'text-white' : 'text-gray-500'}`}>
         {getLabel(type)}
       </span>

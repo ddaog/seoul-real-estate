@@ -26,8 +26,8 @@ export const GameCard: React.FC<GameCardProps> = ({ card, onChoice, onDrag, disa
   const opacity = useTransform(x, [-200, -150, 0, 150, 200], [0, 1, 1, 1, 0]);
 
   // Stamps opacity
-  const leftOpacity = useTransform(x, [-150, -20], [1, 0]);
-  const rightOpacity = useTransform(x, [20, 150], [0, 1]);
+  const leftOverlayOpacity = useTransform(x, [-150, -20], [1, 0]);
+  const rightOverlayOpacity = useTransform(x, [20, 150], [0, 1]);
 
   const [exitDirection, setExitDirection] = useState<'left' | 'right' | null>(null);
 
@@ -80,20 +80,27 @@ export const GameCard: React.FC<GameCardProps> = ({ card, onChoice, onDrag, disa
         className="absolute w-full h-full bg-zinc-900 rounded-[2.5rem] overflow-hidden shadow-[0_30px_60px_-12px_rgba(0,0,0,0.7)] border border-white/10 cursor-grab active:cursor-grabbing will-change-transform z-20"
       >
         <div className="h-full flex flex-col relative">
-          {/* Stamps */}
-          <motion.div
-            style={{ opacity: rightOpacity }}
-            className="absolute top-10 right-6 z-50 px-6 py-2 border-4 rounded-xl font-black text-xl uppercase tracking-tight shadow-lg border-emerald-500 text-emerald-500 -rotate-6 pointer-events-none"
-          >
-            {card.rightChoice.text.split(' ')[0]}
-          </motion.div>
 
-          <motion.div
-            style={{ opacity: leftOpacity }}
-            className="absolute top-10 left-6 z-50 px-6 py-2 border-4 rounded-xl font-black text-xl uppercase tracking-tight shadow-lg border-rose-600 text-rose-600 rotate-6 pointer-events-none"
-          >
-            {card.leftChoice.text.split(' ')[0]}
-          </motion.div>
+          {/* Central Overlay Feedback */}
+          <div className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none">
+            <motion.div
+              style={{ opacity: rightOverlayOpacity }}
+              className="absolute inset-0 flex items-center justify-center bg-emerald-500/20"
+            >
+              <div className="px-6 py-4 bg-emerald-500 text-black text-2xl font-black uppercase tracking-widest shadow-2xl skew-y-[-2deg] scale-110 border-4 border-black">
+                {card.rightChoice.text}
+              </div>
+            </motion.div>
+
+            <motion.div
+              style={{ opacity: leftOverlayOpacity }}
+              className="absolute inset-0 flex items-center justify-center bg-rose-600/20"
+            >
+              <div className="px-6 py-4 bg-rose-600 text-white text-2xl font-black uppercase tracking-widest shadow-2xl skew-y-[2deg] scale-110 border-4 border-white">
+                {card.leftChoice.text}
+              </div>
+            </motion.div>
+          </div>
 
           {/* Art */}
           <div className="relative h-[60%] shrink-0 pointer-events-none">
